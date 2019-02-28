@@ -3,8 +3,8 @@ Modified implementation of stable marriage algorithm to assist in big-little mat
 
 ## How to Use
 The script is based on the following forms used to take top 8 preferences for bigs and littles: 
-* [Form for bigs]()
-* [Form for littles]() 
+* [Form for bigs](https://goo.gl/forms/abo56E0KQgYZOTFB2)
+* [Form for littles](https://goo.gl/forms/CeJJjnMirwitrF1q1) 
 
 1. Create a Google Spreadsheets for each of the forms and download each spreadsheet as a csv file. Place each of these  downloaded files in the same directory as the script. 
 
