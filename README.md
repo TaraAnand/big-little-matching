@@ -1,5 +1,5 @@
 # big-little-matching
-Modified implementation of stable marriage algorithm to assist in big-little matching for my sorority. The script prioritizes the preferences of the littles. 
+Modified implementation of stable marriage algorithm to assist in big-little matching for sororities. The script prioritizes the preferences of the littles. 
 
 ## How to Use
 The script is based on the following forms used to take top 8 preferences for bigs and littles: 
