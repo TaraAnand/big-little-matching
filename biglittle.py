@@ -192,6 +192,7 @@ class BLMatcher(object):
 if __name__ == "__main__":
     if len(sys.argv) < 3:
         print("Run program with command 'python biglittle.py [littlePrefSheet] [bigPrefSheet]'")
+        exit(0)
     else:
         matcher = BLMatcher(sys.argv[1], sys.argv[2])
         matcher.create_pref_spreadsheet()
