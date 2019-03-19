@@ -29,20 +29,6 @@ class BLMatcher(object):
         for l, prefs in self.little_prefs.items(): 
             for i, b in enumerate(prefs): 
                 self.lrank[l][b] = i
-        '''        
-        print("little_prefs")
-        print(self.little_prefs)
-        print("big_prefs")
-        print(self.big_prefs)
-        print("bigs_matched")
-        print(self.bigs_matched)
-        print("pairs")
-        print(self.pairs)
-        print("lrank")
-        print(self.lrank)
-        print("brank")
-        print(self.brank)
-        '''
      
         self.match()
 
@@ -69,23 +55,44 @@ class BLMatcher(object):
         data = open(bigsPref, 'r')      
         responses = list(csv.reader(data))
         responses.pop(0)
-      
-
-        extra = len(self.little_prefs.keys()) - len(responses)
-
+       
         for big in responses:
             self.big_prefs[big[1]] = [big[x] for x in range(3, 11)]
-            if (extra > 0 and (big[11] == "twins plz" or big[11] == "huge lin huge lin huge lin")):
-                
-                twinbig = big[1] + "2"
-                twinbigrep = [big[x] for x in range(2, len(big))] 
-                twinbigrep.insert(0, twinbig)       #add name 
-                twinbigrep.insert(0, big[0])
-                twinbigrep[11] = ""        #copy timestamp 
-                responses.append(twinbigrep)        #add copied line to end of list
-                extra -= 1
-            #print(extra)
+            
+
+        self.most_popular_bigs(responses)
         return None 
+
+    def most_popular_bigs(self, big_responses):
+        big_counts = {}
+        big_Prefs = {}
+
+        extra = len(self.little_prefs.keys()) - len(big_responses)
+        
+
+        for big_rep in big_responses: 
+            big_Count = 0
+            big = big_rep[1]
+            big_Prefs[big] = [big_rep[x] for x in range(3,12)]
+
+            for little in self.little_prefs: 
+                if big in self.little_prefs[little]: 
+                    big_Count += 1
+            big_counts[big] = big_Count
+
+        while extra > 0:
+
+            b = max(big_counts, key=big_counts.get)
+
+            if (big_Prefs[b][8] == "twins plz" or big_Prefs[b][8] == "huge lin huge lin huge lin" or big_Prefs[b][8] == "two if i must" or big_Prefs[b][8] == "one little <3, two if i must"): 
+                twinbig = b + "2"
+                twinbigrep = big_Prefs[b]
+                twinbigrep.insert(0, twinbig)       #add name 
+                twinbigrep.insert(0, "Timestamp")
+                twinbigrep.pop()
+                self.big_prefs[twinbig] = twinbigrep
+                extra -= 1
+            del big_counts[b]
 
     """
     Fill in preferences for the rest of the respective bigs/littles randomly 
@@ -93,21 +100,16 @@ class BLMatcher(object):
     def fill_in_prefs(self): 
         for little in self.little_prefs.keys(): 
             for big in self.big_prefs.keys():
-                #print("BIG")
-                #print(big) 
+
                 if big not in self.little_prefs[little]: 
                     check = big[0:len(big)-1]
-                    #print("doble?")
-                    #print(check)
+                   
                     if check in self.little_prefs[little]: 
                         index = self.little_prefs[little].index(check)
                         self.little_prefs[little].insert(index+1, big)
-                        #print(little)
-                        #print(self.little_prefs[little])
+                        
                         continue
                     self.little_prefs[little].append(big)
-                #print(little)
-                #print(self.little_prefs[little])
 
         for big in self.big_prefs.keys(): 
             for little in self.little_prefs.keys(): 
@@ -160,7 +162,7 @@ class BLMatcher(object):
                     littles.append(l)
             else: 
                 bigs[b] = l
-        print(self.brank)
+        
         return self.match(littles, nxt, bigs)
 
     """
@@ -209,6 +211,7 @@ if __name__ == "__main__":
         matcher = BLMatcher(sys.argv[1], sys.argv[2])
         matcher.create_pref_spreadsheet()
 
-        print("Matches")
+        print("\nMatches\n")
         print(matcher.bigs_matched)
+        print("\nFind the complete list in preferences.csv\n")
     
