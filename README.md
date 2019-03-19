@@ -23,8 +23,9 @@ If `Rematch?` equals `TRUE`, matching committee should review pair and match by 
 The script randomly selects from the bigs who said they wanted more than one little and matches them with littles. In the `Big` column, these bigs's names are listed as `{name}2`. The preferences of littles for these 'duplicate' bigs and of the 'duplicate' bigs for the littles is accounted for. However for matches where bigs are taking more than one little, and littles are suggested as twins, the matches should be reviewed by hand. 
 
 ## Areas of Improvement 
-1. The script does not optimize when assigning bigs who will take multiple littles -- these bigs are assigned randomly out of the bigs who say the prefer more than one little. Matches might be more successful if different bigs are selected to take more than one little. As such, these matches should be reviewed by hand. 
-2. Because bigs and littles only list their top 8 preferences, if a little is not mutually ranked by other bigs or there are more successful matches for all the bigs on a little's list, it is possible her match will be with a big she did not list in her top 8. These matches will be flagged in the `Rematch?` column of _preferences.csv_. 
+1. The script does not optimize when assigning bigs who will take multiple littles. The bigs chosen to take twins are the bigs listed most frequently on the littles preference forms who also said they would be willing to take multiple littles. Matches might be more successful if different bigs are selected to take more than one little. If the matches are unsuccessful, they will be flagged in the `Rematch?` column of _preferences.csv_.
+
+2. Because bigs and littles only list their top 8 preferences, the remainder of the preference list is generated randomly. If a little is not mutually ranked by other bigs or there are more successful matches for all the bigs on a little's list, it is possible her match will be with a big she did not list in her top 8. These matches will be flagged in the `Rematch?` column of _preferences.csv_. 
 
 ## 
 This script was based on an implementation of the [stable marriage algorithm](https://gist.github.com/joyrexus/9967709). 
