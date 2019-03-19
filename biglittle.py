@@ -29,7 +29,7 @@ class BLMatcher(object):
         for l, prefs in self.little_prefs.items(): 
             for i, b in enumerate(prefs): 
                 self.lrank[l][b] = i
-
+        '''        
         print("little_prefs")
         print(self.little_prefs)
         print("big_prefs")
@@ -42,6 +42,7 @@ class BLMatcher(object):
         print(self.lrank)
         print("brank")
         print(self.brank)
+        '''
      
         self.match()
 
@@ -68,19 +69,22 @@ class BLMatcher(object):
         data = open(bigsPref, 'r')      
         responses = list(csv.reader(data))
         responses.pop(0)
+      
 
         extra = len(self.little_prefs.keys()) - len(responses)
 
         for big in responses:
             self.big_prefs[big[1]] = [big[x] for x in range(3, 11)]
-            if (extra > 0 and (big[13] == "twins plz" or big[13] == "huge lin huge lin huge lin")):
+            if (extra > 0 and (big[11] == "twins plz" or big[11] == "huge lin huge lin huge lin")):
+                
                 twinbig = big[1] + "2"
                 twinbigrep = [big[x] for x in range(2, len(big))] 
                 twinbigrep.insert(0, twinbig)       #add name 
-                twinbigrep.insert(0, big[0])        #copy timestamp 
+                twinbigrep.insert(0, big[0])
+                twinbigrep[11] = ""        #copy timestamp 
                 responses.append(twinbigrep)        #add copied line to end of list
                 extra -= 1
-            print(extra)
+            #print(extra)
         return None 
 
     """
@@ -89,21 +93,21 @@ class BLMatcher(object):
     def fill_in_prefs(self): 
         for little in self.little_prefs.keys(): 
             for big in self.big_prefs.keys():
-                print("BIG")
-                print(big) 
+                #print("BIG")
+                #print(big) 
                 if big not in self.little_prefs[little]: 
                     check = big[0:len(big)-1]
-                    print("doble?")
-                    print(check)
+                    #print("doble?")
+                    #print(check)
                     if check in self.little_prefs[little]: 
                         index = self.little_prefs[little].index(check)
                         self.little_prefs[little].insert(index+1, big)
-                        print(little)
-                        print(self.little_prefs[little])
+                        #print(little)
+                        #print(self.little_prefs[little])
                         continue
                     self.little_prefs[little].append(big)
-                print(little)
-                print(self.little_prefs[little])
+                #print(little)
+                #print(self.little_prefs[little])
 
         for big in self.big_prefs.keys(): 
             for little in self.little_prefs.keys(): 
@@ -118,10 +122,10 @@ class BLMatcher(object):
         return self.brank[b][l] < self.brank[b][lit]
 
     """
-    If first choice is already matched, try the next choice.
-    Returns the next choice big for a given little
+    If first choice is already matched, try the nxt choice.
+    Returns the nxt choice big for a given little
     """
-    def next_choice(self, l, b): 
+    def nxt_choice(self, l, b): 
         i = self.lrank[l][b] + 1
         if i >= len(self.little_prefs[l]): 
             return ""
@@ -131,11 +135,11 @@ class BLMatcher(object):
     """
     Match littles with their next preferred big
     """
-    def match(self, littles=None, next=None, bigs=None):
+    def match(self, littles=None, nxt=None, bigs=None):
         if littles is None: 
             littles = self.little_prefs.keys()
-        if next is None: 
-            next = {l:rank[0] for l, rank in self.little_prefs.items()}
+        if nxt is None: 
+            nxt = {l:rank[0] for l, rank in self.little_prefs.items()}
         if bigs is None: 
             bigs = {}                       #mappings of bigs to current little matches
         if not len(littles): 
@@ -143,9 +147,9 @@ class BLMatcher(object):
             self.bigs_matched = bigs 
             return bigs 
         l, littles = list(littles)[0], list(littles)[1:]
-        b = next[l]
-        if b != "":                         #next big to try to match little with 
-            next[l] = self.next_choice(l, b) 
+        b = nxt[l]
+        if b != "":                         #nxt big to try to match little with 
+            nxt[l] = self.nxt_choice(l, b) 
 
             if b in bigs:
                 lit = bigs[b]                   #current little
@@ -156,7 +160,8 @@ class BLMatcher(object):
                     littles.append(l)
             else: 
                 bigs[b] = l
-        return self.match(littles, next, bigs)
+        print(self.brank)
+        return self.match(littles, nxt, bigs)
 
     """
     """
@@ -185,6 +190,13 @@ class BLMatcher(object):
                 littleRank = math.inf 
                 if littleRank > 5 or big == "": 
                     rematch = True
+                filewriter.writerow({'Big':big, 'Suggested Little':little, 'Big Rank':bigRank, 'Little Rank':littleRank, 'Rematch?':rematch})
+        for big in self.big_prefs.keys(): 
+            if big not in self.bigs_matched.keys(): 
+                bigRank = math.inf
+                littleRank = math.inf
+                rematch = True
+                little = ""
                 filewriter.writerow({'Big':big, 'Suggested Little':little, 'Big Rank':bigRank, 'Little Rank':littleRank, 'Rematch?':rematch})
         return None
 
